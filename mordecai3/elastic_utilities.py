@@ -2,6 +2,7 @@ import logging
 import re
 import warnings
 from collections import Counter
+from typing import List
 
 import jellyfish
 import numpy as np
@@ -11,9 +12,10 @@ from elasticsearch_dsl import Q, Search
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
-def make_conn():
+
+def make_conn(hosts: List[str] = None):
     kwargs = dict(
-        hosts=['localhost'],
+        hosts=hosts or ['localhost'],
         port=9200,
         use_ssl=False,
     )
@@ -21,9 +23,10 @@ def make_conn():
     conn = Search(using=CLIENT, index="geonames")
     return conn
 
-def setup_es():
+
+def setup_es(hosts: List[str] = None):
     kwargs = dict(
-        hosts=['localhost'],
+        hosts=hosts or ['localhost'],
         port=9200,
         use_ssl=False,
     )
@@ -35,6 +38,7 @@ def setup_es():
         ConnectionError("Could not locate Elasticsearch. Are you sure it's running?")
     conn = Search(using=CLIENT, index="geonames")
     return conn
+
 
 def normalize(ll: list) -> np.array:    
     """Normalize an array to [0, 1]"""
